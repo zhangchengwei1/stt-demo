@@ -52,8 +52,8 @@ const startRecording = (stream) => {
     stream.getTracks().forEach(track => track.stop())
     // 释放媒体
     mediaRecorder = null
-    // const audioUrl = URL.createObjectURL(audioBlob)
-    // console.log('audioUrl', audioUrl)
+    const audioUrl = URL.createObjectURL(audioBlob)
+    console.log('audioUrl', audioUrl)
     // 调用大模型识别语音
     const formData = new FormData()
     formData.append('file', audioBlob)
