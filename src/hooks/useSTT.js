@@ -15,7 +15,7 @@ const talkText = ref('')
 // 请求状态
 const isRequesting = ref(false)
 // 权限状态
-const permissionStatus = ref('prompt')
+const permissionStatus = ref('init')
 
 // 请求麦克风权限
 const requestPermissionAndStart = async () => {
@@ -25,6 +25,7 @@ const requestPermissionAndStart = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     permissionStatus.value = 'granted'
+    status.value = '获取麦克风权限成功'
     console.log('成功获取麦克风权限')
 
     // 开始录音示例
@@ -32,15 +33,14 @@ const requestPermissionAndStart = async () => {
   } catch (err) {
     console.error('获取麦克风权限失败:', err)
     permissionStatus.value = 'denied'
-
     if (err.name === 'NotAllowedError') {
       error.value = '用户拒绝了麦克风权限'
     } else if (err.name === 'NotFoundError') {
       error.value = '未找到麦克风设备'
     } else {
       error.value = '获取麦克风权限失败: ' + err.message
-
     }
+    status.value = '获取麦克风权限失败::' + error.value
   } finally {
     isRequesting.value = false
   }
@@ -84,10 +84,10 @@ const startRecording = (stream) => {
     getAudioTranscriptions(formData).then(res => {
       console.log('【大模型识别结果】', res.data);
       talkText.value = res.data?.text || ''
-      status.value = '已识别'
+      status.value = '大模型识别成功'
     }).catch(err => {
       console.log('err', err);
-      status.value = '识别失败'
+      status.value = '大模型识别失败'
     })
   }
 
@@ -103,7 +103,7 @@ const startRecording = (stream) => {
 
     microphone.connect(analyser)
 
-    // 使用requestAnimationFrame代替弃用的scriptProcessor
+    // 使用requestAnimationFrame
     const checkAudioEnergy = () => {
       const array = new Uint8Array(analyser.frequencyBinCount)
       analyser.getByteFrequencyData(array)
@@ -124,6 +124,7 @@ const startRecording = (stream) => {
           // 两秒无声音，停止录音
           if (mediaRecorder?.state === 'recording') {
             console.log('两秒无声音，自动停止录音')
+            status.value = '两秒无声音，自动停止录音'
             mediaRecorder.stop()
           }
         }, 2000)
@@ -146,6 +147,7 @@ const startRecording = (stream) => {
   silenceTimer = setTimeout(() => {
     if (mediaRecorder?.state === 'recording') {
       console.log('两秒无声音，自动停止录音')
+      status.value = '两秒无声音，自动停止录音'
       mediaRecorder.stop()
     }
   }, 2000)
@@ -160,11 +162,11 @@ const stopRecording = () => {
   // 停止录音
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop()
-    status.value = '已停止'
+    status.value = '录音已停止'
   }
   // 清除静音计时器
   clearTimeout(silenceTimer)
-  // 取消动画帧请求
+  // 取消
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)
     animationFrameId = null
@@ -194,6 +196,7 @@ export const useSTT = () => {
     console.log('init', annyang);
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       // 不支持getUserMedia
+      status.value = '浏览器不支持 getUserMedia API'
       console.log('浏览器不支持 getUserMedia API');
     }
     if (annyang) {
@@ -205,6 +208,8 @@ export const useSTT = () => {
       // })
       annyang.addCommands({
         '小瞳小瞳 :voice': (voice) => {
+          console.log('测试annyang voice---', voice);
+          status.value = 'annyang 识别到提示词'
           // 调用大模型获取后续的内容，确保信息得当
           requestPermissionAndStart()
         }
@@ -216,7 +221,7 @@ export const useSTT = () => {
       //   }
       // })
     } else {
-      status.value = '初始化失败'
+      status.value = 'annyang初始化失败'
     }
   }
 
@@ -240,6 +245,18 @@ export const useSTT = () => {
     if (silenceTimer) {
       clearTimeout(silenceTimer)
     }
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = null
+    }
+    if (audioContext) {
+      audioContext.close()
+      audioContext = null
+    }
+    if (mediaRecorder) {
+      mediaRecorder.stop()
+      mediaRecorder = null
+    }
     stopRecording()
   })
 
@@ -247,6 +264,7 @@ export const useSTT = () => {
     status,
     talkText,
     init,
-    start
+    start,
+    permissionStatus
   }
 }
