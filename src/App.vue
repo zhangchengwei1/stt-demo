@@ -5,7 +5,7 @@
       状态：<span>{{ status }}</span>
     </div>
     <div class="talk-text">
-      你说的是：<span>{{ talkText }}</span>
+      你说的是：<span>{{ talkText || '---' }}</span>
     </div>
   </div>
 </template>
@@ -28,6 +28,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .status {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.talk-text {
+  margin-bottom: 5px;
 }
 </style>
