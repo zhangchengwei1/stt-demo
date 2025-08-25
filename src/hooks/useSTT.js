@@ -105,18 +105,16 @@ export const useSTT = () => {
       // })
       annyang.addCommands({
         '小瞳小瞳 :voice': (voice) => {
-          // talkText.value = '小瞳小瞳' + voice
           // 调用大模型获取后续的内容，确保信息得当
           requestPermissionAndStart()
         }
       })
-      annyang.addCommands({
-        '小同小同 :voice': (voice) => {
-          // talkText.value = '小瞳小瞳' + voice
-          // 调用大模型获取后续的内容 ,确保信息得当
-          requestPermissionAndStart()
-        }
-      })
+      // annyang.addCommands({
+      //   '小同小同 :voice': (voice) => {
+      //     // 调用大模型获取后续的内容 ,确保信息得当
+      //     requestPermissionAndStart()
+      //   }
+      // })
     } else {
       status.value = '初始化失败'
     }
