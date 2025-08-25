@@ -12,14 +12,12 @@ const error = ref('')
 const status = ref('未初始化')
 // 识别到的文本
 const talkText = ref('')
-// 请求状态
-const isRequesting = ref(false)
+
 // 权限状态
 const permissionStatus = ref('init')
 
 // 请求麦克风权限
 const requestPermissionAndStart = async () => {
-  isRequesting.value = true
   error.value = ''
 
   try {
@@ -41,8 +39,6 @@ const requestPermissionAndStart = async () => {
       error.value = '获取麦克风权限失败: ' + err.message
     }
     status.value = '获取麦克风权限失败::' + error.value
-  } finally {
-    isRequesting.value = false
   }
 }
 
