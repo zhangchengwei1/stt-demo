@@ -14,14 +14,12 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { useSTT } from '@/hooks/useSTT'
 
-const { status, talkText, init, start, permissionStatus } = useSTT()
+const { status, talkText, init, start, stop } = useSTT()
 
 onMounted(() => {
   init()
   nextTick(() => {
-    if (permissionStatus.value === 'granted') {
-      start()
-    }
+    // start()
   })
 })
 </script>
