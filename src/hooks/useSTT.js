@@ -22,8 +22,8 @@ let isPromptDetected = false // 是否检测到唤醒词
 let isWaitingForResponse = false // 是否正在等待大模型响应
 
 // 常量
-const WAKE_WORD = '小瞳小瞳' // 唤醒词
-const SILENCE_TIMEOUT = 1500 // 静音超时时间(ms) ,用于大模型语音识别处理
+const WAKE_WORD = '小童小童' // 唤醒词
+const SILENCE_TIMEOUT = 500 // 静音超时时间(ms) ,用于大模型语音识别处理
 const AUDIO_ENERGY_THRESHOLD = 20 // 音量阈值
 
 // 兼容性处理
@@ -80,7 +80,7 @@ const startRecording = (stream) => {
   isRecording.value = true
 
   // 创建媒体记录器
-  mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+  mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/mp3' })
 
   mediaRecorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
@@ -89,7 +89,7 @@ const startRecording = (stream) => {
   }
 
   mediaRecorder.onstop = () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' })
+    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' })
 
     // 清理资源
     cleanupRecordingResources(stream)
@@ -213,9 +213,9 @@ const processAudioWithModel = (audioBlob) => {
 
   isWaitingForResponse = true
   status.value = '正在识别...'
-
+  const file = new File([audioBlob], 'audio.mp3', { type: 'audio/mp3' })
   const formData = new FormData()
-  formData.append('file', audioBlob)
+  formData.append('file', file)
   formData.append('model', 'FunAudioLLM/SenseVoiceSmall')
 
   getAudioTranscriptions(formData)
