@@ -371,8 +371,7 @@ export const useSTT = () => {
    * 重启语音识别
    */
   const restartRecognition = () => {
-    console.log('重启语音识别');
-    status.value = '重启中'
+    status.value = '重启中...'
     if (isListening) {
       clearTimeout(restartTimer)
       restartTimer = setTimeout(() => {
