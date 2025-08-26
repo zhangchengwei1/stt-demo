@@ -491,6 +491,14 @@ export const useSTT = () => {
   onUnmounted(() => {
     isListening = false
     isPromptDetected = false
+    if (restartTimer) {
+      clearTimeout(restartTimer)
+      restartTimer = null
+    }
+    if (silenceTimer) {
+      clearTimeout(silenceTimer)
+      silenceTimer = null
+    }
     stop()
   })
 
