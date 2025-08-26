@@ -23,7 +23,7 @@ let isWaitingForResponse = false // 是否正在等待大模型响应
 
 // 常量
 const WAKE_WORD = '小瞳小瞳' // 唤醒词
-const SILENCE_TIMEOUT = 1500 // 静音超时时间(ms)
+const SILENCE_TIMEOUT = 1500 // 静音超时时间(ms) ,用于大模型语音识别处理
 const AUDIO_ENERGY_THRESHOLD = 20 // 音量阈值
 
 // 兼容性处理
@@ -371,9 +371,12 @@ export const useSTT = () => {
    * 重启语音识别
    */
   const restartRecognition = () => {
+    console.log('重启语音识别');
+    status.value = '重启中'
     if (isListening) {
       clearTimeout(restartTimer)
       restartTimer = setTimeout(() => {
+        status.value = '监听中'
         recognition.start()
       }, 300)
     }

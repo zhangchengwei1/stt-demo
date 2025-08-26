@@ -5,7 +5,7 @@
       状态：<span>{{ status }}</span>
     </div>
     <div class="talk-text">
-      你说的是：<span>{{ talkText || '---' }}</span>
+      大模型识别：<span>{{ talkText || '---' }}</span>
     </div>
   </div>
 </template>
@@ -19,7 +19,7 @@ const { status, talkText, init, start, stop } = useSTT()
 onMounted(() => {
   init()
   nextTick(() => {
-    // start()
+    start()
   })
 })
 </script>
